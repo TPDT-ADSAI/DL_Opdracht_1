@@ -1,7 +1,7 @@
 
 De onderdelen die al de maximale score haalden (transfer learning, multimodaal model, EDA) hebben we ongewijzigd gelaten. De drie criteria met aftrek hebben we concreet aangepakt:
 
-**Dense NN (4/5, lossfunctie):** training-loss is omgezet naar een custom `mape_price_loss` (MAPE-op-price via log-diff identity), wat gradient-wise direct op MAPE stuurt. De numerieke instabiliteit van een naieve MAPE-loss is opgelost door de output-bias te initialiseren op het gemiddelde log-price. Daarnaast bias-correctie tegen log-normale onderschatting, een Huber-vs-MAE ablation en residual-plots per prijssegment toegevoegd. FC OOF MAPE zakte van 0.2739 naar 0.2552.
+**Dense NN (4/5, lossfunctie):** training-loss is een custom MAPE-loss in log-ruimte (`mape_price_loss` via log-diff identity), met output-bias-initialisatie op mean(log_price) en gradient clipping om de training stabiel te houden. MAE op log1p(price) is als alternatief getest in de loss-ablation. Daarnaast bias-correctie tegen log-normale onderschatting, een Huber-vs-MAE ablation en residual-plots per prijssegment toegevoegd. FC OOF MAPE zakte van 0.2739 naar 0.2552.
 
 **CNN (2.75/5, augmentatie):** MixUp en Cutout verwijderd; MixUp mengt twee huizen plus prijzen wat voor regressie onrealistische tussenvormen oplevert, Cutout op de collage gaf in de ablation geen winst. Augmentatie is nu alleen geometrisch (h-flip, kleine shift, kleine zoom). Verder ablation-tabel met zes varianten, seed-averaging (2 seeds per fold), TTA met h-flip, en een saliency-visualisatie voor interpretability toegevoegd. De CNN-MAPE bleek bij 7-fold variabel door dure outliers in kleine val-sets, ensemble-weight kwam op nul uit zodat de Kaggle-score onaangetast bleef.
 
